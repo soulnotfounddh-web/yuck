@@ -1,33 +1,24 @@
 Ex-1
-
 import java.util.Arrays;
+
 public class SortCommandLine {
-public static void main(String[] args) {
-
-if (args.length == 0) {
-System.out.println("Please provide some
-integers as command
-line arguments.");
-return;
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Please provide some integers as command line arguments.");
+            return;
+        }
+        int[] numbers = new int[args.length];
+        for (int i = 0; i < args.length; i++) {
+            numbers[i] = Integer.parseInt(args[i]);
+        }
+        Arrays.sort(numbers);
+        System.out.println("Sorted numbers in ascending order:");
+        for (int num : numbers) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+    }
 }
-
-int[] numbers = new int[args.length];
-
-for (int i = 0; i < args.length; i++) {
-numbers[i] = Integer.parseInt(args[i]);
-}
-
-Arrays.sort(numbers);
-
-System.out.println("Sorted numbers in
-ascending order:");
-for (int num : numbers) {
-System.out.print(num + " ");
-}
-System.out.println();
-}
-}
-
 OUTPUT:
 javac SortCommandLine.java
 java SortCommandLine 5 2 9 1 7
@@ -36,16 +27,15 @@ java SortCommandLine 5 2 9 1 7
 
 Ex-2
 
-// Thread class
 class MessageThread extends Thread {
     private String message;
-    private int delay; // in milliseconds
+    private int delay;
     MessageThread(String message, int delay) {
         this.message = message;
         this.delay = delay;
     }
     public void run() {
-        for (int i = 1; i <= 5; i++) { // print 5 times
+        for (int i = 1; i <= 5; i++) {
             System.out.println(message);
             try {
                 Thread.sleep(delay);
@@ -55,7 +45,6 @@ class MessageThread extends Thread {
         }
     }
 }
-
 
 public class ThreeThreadsDemo {
     public static void main(String[] args) {
@@ -68,7 +57,6 @@ public class ThreeThreadsDemo {
     }
 }
 
-
 Ex-3
 
 class InvalidInputException extends Exception {
@@ -80,25 +68,18 @@ class InvalidInputException extends Exception {
 public class SafeDivision {
     public static void main(String[] args) {
         try {
-            // Check number of arguments
             if (args.length != 2) {
-                throw new InvalidInputException(
-                    "Please provide exactly two integers x and y."
-                );
+                throw new InvalidInputException("Please provide exactly two integers x and y.");
             }
             int x, y;
             try {
                 x = Integer.parseInt(args[0]);
                 y = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                throw new InvalidInputException(
-                    "Both x and y must be valid signed integers."
-                );
+                throw new InvalidInputException("Both x and y must be valid signed integers.");
             }
             if (y == 0) {
-                throw new InvalidInputException(
-                    "Division by zero is not allowed. y must not be zero."
-                );
+                throw new InvalidInputException("Division by zero is not allowed. y must not be zero.");
             }
             int result = x / y;
             System.out.println("x = " + x + ", y = " + y);
@@ -108,6 +89,7 @@ public class SafeDivision {
         }
     }
 }
+
 
 Ex-4
 
@@ -361,8 +343,103 @@ public class LibraryInsert {
 
 
 Ex-8
+CREATE DATABASE IF NOT EXISTS student_db;
+USE student_db;
 
-NOT AVAILABLE
+CREATE TABLE IF NOT EXISTS students (
+    regno INT PRIMARY KEY,
+    name VARCHAR(60) NOT NULL,
+    dept VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS marks (
+    regno INT PRIMARY KEY,
+    m1 INT NOT NULL,
+    m2 INT NOT NULL,
+    m3 INT NOT NULL,
+    m4 INT NOT NULL,
+    m5 INT NOT NULL,
+    FOREIGN KEY (regno) REFERENCES students(regno)
+);
+
+INSERT INTO students VALUES (105, 'Arun', 'MCA');
+INSERT INTO marks VALUES (105, 78, 85, 69, 74, 80);
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class Student {
+    private static final String URL = "jdbc:mysql://localhost:3306/student_db";
+    private static final String USER = "root";
+    private static final String PASS = "25mca055";
+    public static void main(String[] args) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("JDBC Driver not found. Add MySQL connector JAR.");
+            return;
+        }
+        Scanner sc = new Scanner(System.in);
+        System.out.println("===== STUDENT MARK LIST (JDBC) =====");
+        System.out.print("Enter Register Number (regno): ");
+        int regno = sc.nextInt();
+        String sql = """
+        SELECT s.regno, s.name, s.dept, m.m1, m.m2, m.m3, m.m4, m.m5
+        FROM students s
+        JOIN marks m ON s.regno = m.regno
+        WHERE s.regno = ?
+        """;
+        try (Connection con = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, regno);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("No student found for regno: " + regno);
+                    return;
+                }
+                String name = rs.getString("name");
+                String dept = rs.getString("dept");
+                int m1 = rs.getInt("m1");
+                int m2 = rs.getInt("m2");
+                int m3 = rs.getInt("m3");
+                int m4 = rs.getInt("m4");
+                int m5 = rs.getInt("m5");
+                int total = m1 + m2 + m3 + m4 + m5;
+                double avg = total / 5.0;
+                String result = (m1 >= 40 && m2 >= 40 && m3 >= 40 && m4 >= 40 && m5 >= 40)
+                        ? "PASS" : "FAIL";
+                String grade;
+                if (result.equals("FAIL")) grade = "U";
+                else if (avg >= 90) grade = "O";
+                else if (avg >= 80) grade = "A+";
+                else if (avg >= 70) grade = "A";
+                else if (avg >= 60) grade = "B+";
+                else if (avg >= 50) grade = "B";
+                else grade = "C";
+                System.out.println("\n========== MARK LIST ==========");
+                System.out.println("Register No : " + regno);
+                System.out.println("Name : " + name);
+                System.out.println("Department : " + dept);
+                System.out.println("--------------------------------");
+                System.out.println("Subject 1 : " + m1);
+                System.out.println("Subject 2 : " + m2);
+                System.out.println("Subject 3 : " + m3);
+                System.out.println("Subject 4 : " + m4);
+                System.out.println("Subject 5 : " + m5);
+                System.out.println("--------------------------------");
+                System.out.println("Total : " + total);
+                System.out.printf("Average : %.2f%n", avg);
+                System.out.println("Result : " + result);
+                System.out.println("Grade : " + grade);
+                System.out.println("================================");
+            }
+        } catch (SQLException e) {
+            System.out.println("DB Error: " + e.getMessage());
+        } finally {
+            sc.close();
+        }
+    }
+}
 
 
 EX-9
