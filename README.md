@@ -1,630 +1,789 @@
 Ex-1
-import java.util.Arrays;
 
-public class SortCommandLine {
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            System.out.println("Please provide some integers as command line arguments.");
-            return;
-        }
-        int[] numbers = new int[args.length];
-        for (int i = 0; i < args.length; i++) {
-            numbers[i] = Integer.parseInt(args[i]);
-        }
-        Arrays.sort(numbers);
-        System.out.println("Sorted numbers in ascending order:");
-        for (int num : numbers) {
-            System.out.print(num + " ");
-        }
-        System.out.println();
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int value;
+    struct node *next;
+};
+
+void printLinkedlist(struct node* p) {
+    while (p != NULL) {
+        printf("%d ", p->value);
+        p = p->next;
     }
 }
-OUTPUT:
-javac SortCommandLine.java
-java SortCommandLine 5 2 9 1 7
+
+int main() {
+    struct node* head;
+    struct node* one = NULL;
+    struct node* two = NULL;
+    struct node* three = NULL;
+    one = malloc(sizeof(struct node));
+    two = malloc(sizeof(struct node));
+    three = malloc(sizeof(struct node));
+    one->value = 1;
+    two->value = 2;
+    three->value = 3;
+    one->next = two;
+    two->next = three;
+    three->next = NULL;
+    head = one;
+    printLinkedlist(head);
+    return 0;
+}
 
 
 
 Ex-2
 
-class MessageThread extends Thread {
-    private String message;
-    private int delay;
-    MessageThread(String message, int delay) {
-        this.message = message;
-        this.delay = delay;
-    }
-    public void run() {
-        for (int i = 1; i <= 5; i++) {
-            System.out.println(message);
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                System.out.println("Thread interrupted");
+#include <stdlib.h>
+#include <stdio.h>
+
+struct node {
+    int data;
+    struct node *left;
+    struct node *right;
+};
+
+struct node *root = NULL;
+
+void insert(int data) {
+    struct node *tempnode = (struct node*) malloc(sizeof(struct node));
+    struct node *current;
+    struct node *parent;
+    tempnode->data = data;
+    tempnode->left = NULL;
+    tempnode->right = NULL;
+    if (root == NULL) {
+        root = tempnode;
+        return;
+    } else {
+        current = root;
+        parent = NULL;
+        while (1) {
+            parent = current;
+            if (data < parent->data) {
+                current = current->left;
+                if (current == NULL) {
+                    parent->left = tempnode;
+                    return;
+                }
+            } else {
+                current = current->right;
+                if (current == NULL) {
+                    parent->right = tempnode;
+                    return;
+                }
             }
         }
     }
 }
 
-public class ThreeThreadsDemo {
-    public static void main(String[] args) {
-        MessageThread t1 = new MessageThread("Good Morning", 1000);
-        MessageThread t2 = new MessageThread("Hello", 2000);
-        MessageThread t3 = new MessageThread("Welcome", 3000);
-        t1.start();
-        t2.start();
-        t3.start();
+struct node* search(int data) {
+    struct node *current = root;
+    printf("Visiting elements: ");
+    while (current != NULL && current->data != data) {
+        printf("%d ", current->data);
+        if (data < current->data)
+            current = current->left;
+        else
+            current = current->right;
     }
+    return current;
 }
+
+int main() {
+    int arr[7] = {27, 14, 35, 10, 19, 31, 42};
+    int i;
+    for (i = 0; i < 7; i++)
+        insert(arr[i]);
+    i = 31;
+    struct node *temp = search(i);
+    if (temp != NULL) {
+        printf("\n[%d] Element found\n", temp->data);
+    } else {
+        printf("\n%d Element not found\n", i);
+    }
+    i = 15;
+    temp = search(i);
+    if (temp != NULL) {
+        printf("\n[%d] Element found\n", temp->data);
+    } else {
+        printf("\n%d Element not found\n", i);
+    }
+    return 0;
+}
+
 
 Ex-3
 
-class InvalidInputException extends Exception {
-    public InvalidInputException(String message) {
-        super(message);
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node* next;
+};
+
+struct node *head = NULL, *tail = NULL;
+
+void addnode(int data) {
+    struct node* new_node = (struct node*) malloc(sizeof(struct node));
+    new_node->data = data;
+    new_node->next = NULL;
+    if (head == NULL) {
+        head = new_node;
+        tail = new_node;
+    } else {
+        tail->next = new_node;
+        tail = new_node;   // FIXED missing semicolon
     }
 }
 
-public class SafeDivision {
-    public static void main(String[] args) {
-        try {
-            if (args.length != 2) {
-                throw new InvalidInputException("Please provide exactly two integers x and y.");
+void sortlist() {
+    struct node* current = head;
+    struct node* index = NULL;
+    int temp;
+    if (head == NULL) {
+        return;
+    } else {
+        while (current != NULL) {
+            index = current->next;
+            while (index != NULL) {
+                if (current->data > index->data) {
+                    temp = current->data;
+                    current->data = index->data;
+                    index->data = temp;
+                }
+                index = index->next;
             }
-            int x, y;
-            try {
-                x = Integer.parseInt(args[0]);
-                y = Integer.parseInt(args[1]);
-            } catch (NumberFormatException e) {
-                throw new InvalidInputException("Both x and y must be valid signed integers.");
-            }
-            if (y == 0) {
-                throw new InvalidInputException("Division by zero is not allowed. y must not be zero.");
-            }
-            int result = x / y;
-            System.out.println("x = " + x + ", y = " + y);
-            System.out.println("Result of x / y = " + result);
-        } catch (InvalidInputException e) {
-            System.out.println("Error: " + e.getMessage());
+            current = current->next;
         }
     }
 }
 
+void display() {
+    struct node* current = head;
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    addnode(9);
+    addnode(7);
+    addnode(11);
+    addnode(15);
+    addnode(2);
+    printf("Original List:\n");
+    display();
+    sortlist();
+    printf("Sorted List:\n");
+    display();
+    return 0;
+}
 
 Ex-4
 
-import java.io.*;
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-public class FileStats {
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: java FileStats <filename>");
-            return;
-        }
-        String fileName = args[0];
-        int lineCount = 0;
-        int wordCount = 0;
-        int charCount = 0;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-            String line;
-            while ((line = br.readLine()) != null) {
-                lineCount++;          
-                charCount += line.length();
-                String trimmed = line.trim();
-                if (!trimmed.isEmpty()) {
-                    String[] words = trimmed.split("\\s+");
-                    wordCount += words.length;
-                }
-            }
-            br.close();
-            System.out.println("File Name : " + fileName);
-            System.out.println("Lines : " + lineCount);
-            System.out.println("Words : " + wordCount);
-            System.out.println("Characters : " + charCount);
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + fileName);
-        } catch (IOException e) {
-            System.out.println("Error reading file.");
-        }
-    }
+struct node {
+    int key;
+    struct node* next;
+};
+
+void push(struct node** head_ref, int new_key) {
+    struct node* new_node = (struct node*) malloc(sizeof(struct node));
+    new_node->key = new_key;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
 }
 
+bool search(struct node* head, int x) {
+    struct node* current = head;
+    while (current != NULL) {
+        if (current->key == x)
+            return true;
+        current = current->next;
+    }
+    return false;
+}
+
+int main() {
+    struct node* head = NULL;
+    push(&head, 10);
+    push(&head, 15);
+    push(&head, 20);
+    push(&head, 48);
+    if (search(head, 48))
+        printf("Yes");
+    else
+        printf("No");
+    return 0;
+}
 
 Ex-5
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+#include <stdio.h>
+#include <stdlib.h>
 
-public class FactorialSwing extends JFrame implements ActionListener {
-   JTextField inputField, outputField;
-    JButton computeButton;
-    public FactorialSwing() {
-        setTitle("Factorial Calculator");
-        setSize(350, 180);
-        setLayout(new FlowLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        add(new JLabel("Enter Number:"));
-        inputField = new JTextField(10);
-        add(inputField);
-        add(new JLabel("Factorial:"));
-        outputField = new JTextField(10);
-        outputField.setEditable(false);
-        add(outputField);
-        computeButton = new JButton("Compute");
-        computeButton.addActionListener(this);
-        add(computeButton);
-        setVisible(true);
+struct node {
+    int data;
+    struct node* next;
+};
+
+struct node* head = NULL;
+
+void push(int val) {
+    struct node* newnode = (struct node*) malloc(sizeof(struct node));
+    newnode->data = val;
+    newnode->next = head;
+    head = newnode;
+}
+
+void pop() {
+    struct node* temp;
+    if (head == NULL)
+        printf("Stack is empty \n");
+    else {
+        printf("Poped element %d\n", head->data);
+        temp = head;
+        head = head->next;
+        free(temp);
     }
-    public void actionPerformed(ActionEvent e) {
-        try {
-            int n = Integer.parseInt(inputField.getText());
-            if (n < 0) {
-                outputField.setText("Invalid");
-                return;
-            }
-            long fact = 1;
-            for (int i = 1; i <= n; i++) {
-                fact *= i;
-            }
-            outputField.setText(Long.toString(fact));
-        } catch (NumberFormatException ex) {
-            outputField.setText("Invalid");
-        }
+}
+
+void printlist() {
+    struct node* temp = head;
+    while (temp != NULL) {
+        printf("\t %d", temp->data);
+        temp = temp->next;
     }
-    public static void main(String[] args) {
-        new FactorialSwing();
-    }
+    printf("\t NULL\n");
+}
+
+int main() {
+    push(20);
+    push(30);
+    push(40);
+    printlist();
+    pop();
+    printlist();
+    return 0;
 }
 
 
 Ex-6
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+#include <stdio.h>
+#include <stdlib.h>
 
-public class AdvancedJavaLabGUI extends JFrame implements ActionListener {
-    JCheckBox cbJava, cbPython, cbDBMS, cbWeb;
-    JRadioButton rbMale, rbFemale, rbOther;
-    ButtonGroup genderGroup;
-    JButton btnShow, btnClear, btnExit;
-    JTextArea displayArea;
-    public AdvancedJavaLabGUI() {
-        setTitle("Advanced Java Lab I MCA – Course Selection");
-        setSize(600, 420);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
-        JLabel header = new JLabel("ADVANCED JAVA LAB I MCA", JLabel.CENTER);
-        header.setFont(new Font("Arial", Font.BOLD, 22));
-        add(header, BorderLayout.NORTH);
-        JPanel leftPanel = new JPanel();
-        leftPanel.setLayout(new GridLayout(2, 1, 10, 10));
-        JPanel coursePanel = new JPanel(new GridLayout(5, 1, 5, 5));
-        coursePanel.setBorder(BorderFactory.createTitledBorder("Select Courses"));
-        cbJava = new JCheckBox("Java");
-        cbPython = new JCheckBox("Python");
-        cbDBMS = new JCheckBox("DBMS");
-        cbWeb = new JCheckBox("Web Development");
-        coursePanel.add(new JLabel("Courses:"));
-        coursePanel.add(cbJava);
-        coursePanel.add(cbPython);
-        coursePanel.add(cbDBMS);
-        coursePanel.add(cbWeb);
-        JPanel genderPanel = new JPanel(new GridLayout(4, 1, 5, 5));
-        genderPanel.setBorder(BorderFactory.createTitledBorder("Select Gender"));
-        rbMale = new JRadioButton("Male");
-        rbFemale = new JRadioButton("Female");
-        rbOther = new JRadioButton("Other");
-        genderGroup = new ButtonGroup();
-        genderGroup.add(rbMale);
-        genderGroup.add(rbFemale);
-        genderGroup.add(rbOther);
-        genderPanel.add(new JLabel("Gender:"));
-        genderPanel.add(rbMale);
-        genderPanel.add(rbFemale);
-        genderPanel.add(rbOther);
-        leftPanel.add(coursePanel);
-        leftPanel.add(genderPanel);
-        add(leftPanel, BorderLayout.WEST);
-        displayArea = new JTextArea();
-        displayArea.setFont(new Font("Consolas", Font.PLAIN, 14));
-        displayArea.setEditable(false);
-        displayArea.setBorder(BorderFactory.createTitledBorder("Selected Details"));
-        JScrollPane sp = new JScrollPane(displayArea);
-        add(sp, BorderLayout.CENTER);
-        displayArea.setText("=== Advanced Java Lab I MCA 2025 Batch ===\n\n");
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        btnShow = new JButton("Show Selection");
-        btnClear = new JButton("Clear");
-        btnExit = new JButton("Exit");
-        btnShow.addActionListener(this);
-        btnClear.addActionListener(this);
-        btnExit.addActionListener(this);
-        buttonPanel.add(btnShow);
-        buttonPanel.add(btnClear);
-        buttonPanel.add(btnExit);
-        add(buttonPanel, BorderLayout.SOUTH);
-        setVisible(true);
+struct node {
+    int data;
+    struct node* next;
+};
+
+struct node* front = NULL;
+struct node* rear = NULL;
+
+void enqueue(int value) {
+    struct node* ptr = (struct node*) malloc(sizeof(struct node));
+    ptr->data = value;
+    ptr->next = NULL;
+    if (front == NULL && rear == NULL) {
+        front = rear = ptr;
+    } else {
+        rear->next = ptr;
+        rear = ptr;
     }
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnShow) {
-            StringBuilder courses = new StringBuilder();
-            if (cbJava.isSelected()) courses.append("Java, ");
-            if (cbPython.isSelected()) courses.append("Python, ");
-            if (cbDBMS.isSelected()) courses.append("DBMS, ");
-            if (cbWeb.isSelected()) courses.append("Web Development, ");
-            String selectedCourses = courses.length() > 0
-                    ? courses.substring(0, courses.length() - 2)
-                    : "No course selected";
-            String gender = "Not selected";
-            if (rbMale.isSelected()) gender = "Male";
-            else if (rbFemale.isSelected()) gender = "Female";
-            else if (rbOther.isSelected()) gender = "Other";
-            displayArea.setText("=== Advanced Java Lab I MCA 2025 Batch ===\n\n");
-            displayArea.append("Selected Courses : " + selectedCourses + "\n");
-            displayArea.append("Selected Gender : " + gender + "\n");
+    printf("Node is inserted\n\n");
+}
+
+int dequeue() {
+    if (front == NULL) {
+        printf("\nUnderflow\n");
+        return -1;
+    } else {
+        struct node* temp = front;
+        int temp_data = front->data;
+        front = front->next;
+        free(temp);
+        return temp_data;
+    }
+}
+
+void display() {
+    struct node* temp;
+    if (front == NULL && rear == NULL) {
+        printf("\nQueue is empty\n");
+    } else {
+        printf("The queue is:\n");
+        temp = front;
+        while (temp) {
+            printf("%d ---> ", temp->data);
+            temp = temp->next;
         }
-        else if (e.getSource() == btnClear) {
-            cbJava.setSelected(false);
-            cbPython.setSelected(false);
-            cbDBMS.setSelected(false);
-            cbWeb.setSelected(false);
-            genderGroup.clearSelection();
-            displayArea.setText("=== Advanced Java Lab I MCA 2025 Batch ===\n\n");
-            displayArea.append("Cleared selections.\n");
-        }
-        else if (e.getSource() == btnExit) {
-            System.exit(0);
+        printf("NULL\n\n");
+    }
+}
+
+int main() {
+    int choice = 0, value;
+    printf("Implementation of queue using linked list\n");
+    while (choice != 4) {
+        printf("1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("\nEnter the value to insert: ");
+                scanf("%d", &value);
+                enqueue(value);
+                break;
+            case 2:
+                printf("Popped Element is: %d\n", dequeue());
+                break;
+            case 3:
+                display();
+                break;
+            case 4:
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("\nWrong choice\n");
         }
     }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AdvancedJavaLabGUI());
-    }
+    return 0;
 }
 
 
 Ex-7
 
-CREATE DATABASE IF NOT EXISTS library_db;
 
-USE library_db;
+#include <stdio.h>
+#include <stdlib.h>
 
-CREATE TABLE IF NOT EXISTS books (
-    book_id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(100) NOT NULL,
-    author VARCHAR(100) NOT NULL,
-    price DOUBLE NOT NULL,
-    publisher VARCHAR(100) NOT NULL
-);
+struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+};
 
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-public class LibraryInsert {
-    private static final String URL = "jdbc:mysql://localhost:3306/library_db";
-    private static final String USER = "root";
-    private static final String PASS = "root"; // put your MySQL password here
-    public static void main(String[] args) {
-        String title = "Java Programming";
-        String author = "Herbert Schildt";
-        double price = 550.00;
-        String publisher = "McGraw Hill";
-        String sql = "INSERT INTO books(title, author, price, publisher) VALUES (?, ?, ?, ?)";
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            try (
-                Connection con = DriverManager.getConnection(URL, USER, PASS);
-                PreparedStatement ps = con.prepareStatement(sql)
-            ) {
-                ps.setString(1, title);
-                ps.setString(2, author);
-                ps.setDouble(3, price);
-                ps.setString(4, publisher);
-                int rows = ps.executeUpdate();
-                if (rows > 0) {
-                    System.out.println("Book inserted successfully!");
-                } else {
-                    System.out.println("Insert failed!");
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            System.out.println("JDBC Driver not found. Add mysql-connector-j jar.");
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-        }
-    }
+void insertFront(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = (*head);
+    newNode->prev = NULL;
+    if((*head) != NULL)
+        (*head)->prev = newNode;
+    (*head) = newNode;
 }
 
+void insertAfter(struct Node* prev_node, int data) {
+    if(prev_node == NULL) {
+        printf("Previous node cannot be null");
+        return;
+    }
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = prev_node->next;
+    prev_node->next = newNode;
+    newNode->prev = prev_node;
+    if(newNode->next != NULL)
+        newNode->next->prev = newNode;
+}
+
+void insertEnd(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    struct Node* temp = *head;
+    if(*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
+    }
+    while(temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void deleteNode(struct Node** head, struct Node* del_node) {
+    if(*head == NULL || del_node == NULL)
+        return;
+    if(*head == del_node)
+        *head = del_node->next;
+    if(del_node->next != NULL)
+        del_node->next->prev = del_node->prev;
+    if(del_node->prev != NULL)
+        del_node->prev->next = del_node->next;
+    free(del_node);
+}
+
+void displayList(struct Node* node) {
+    struct Node* last;
+    while(node != NULL) {
+        printf("%d->", node->data);
+        last = node;
+        node = node->next;
+    }
+    if(node == NULL)
+        printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    insertEnd(&head, 5);
+    insertFront(&head, 1);
+    insertFront(&head, 6);
+    insertEnd(&head, 9);
+    insertAfter(head, 11);
+    insertAfter(head->next, 15);
+    displayList(head);
+    deleteNode(&head, head->next->next->next->next->next);
+    displayList(head);
+    return 0;
+}
 
 Ex-8
-CREATE DATABASE IF NOT EXISTS student_db;
-USE student_db;
 
-CREATE TABLE IF NOT EXISTS students (
-    regno INT PRIMARY KEY,
-    name VARCHAR(60) NOT NULL,
-    dept VARCHAR(30) NOT NULL
-);
+#include<stdio.h>
 
-CREATE TABLE IF NOT EXISTS marks (
-    regno INT PRIMARY KEY,
-    m1 INT NOT NULL,
-    m2 INT NOT NULL,
-    m3 INT NOT NULL,
-    m4 INT NOT NULL,
-    m5 INT NOT NULL,
-    FOREIGN KEY (regno) REFERENCES students(regno)
-);
-
-INSERT INTO students VALUES (105, 'Arun', 'MCA');
-INSERT INTO marks VALUES (105, 78, 85, 69, 74, 80);
-
-import java.sql.*;
-import java.util.Scanner;
-
-public class Student {
-    private static final String URL = "jdbc:mysql://localhost:3306/student_db";
-    private static final String USER = "root";
-    private static final String PASS = "25mca055";
-    public static void main(String[] args) {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            System.out.println("JDBC Driver not found. Add MySQL connector JAR.");
-            return;
-        }
-        Scanner sc = new Scanner(System.in);
-        System.out.println("===== STUDENT MARK LIST (JDBC) =====");
-        System.out.print("Enter Register Number (regno): ");
-        int regno = sc.nextInt();
-        String sql = """
-        SELECT s.regno, s.name, s.dept, m.m1, m.m2, m.m3, m.m4, m.m5
-        FROM students s
-        JOIN marks m ON s.regno = m.regno
-        WHERE s.regno = ?
-        """;
-        try (Connection con = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, regno);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    System.out.println("No student found for regno: " + regno);
-                    return;
-                }
-                String name = rs.getString("name");
-                String dept = rs.getString("dept");
-                int m1 = rs.getInt("m1");
-                int m2 = rs.getInt("m2");
-                int m3 = rs.getInt("m3");
-                int m4 = rs.getInt("m4");
-                int m5 = rs.getInt("m5");
-                int total = m1 + m2 + m3 + m4 + m5;
-                double avg = total / 5.0;
-                String result = (m1 >= 40 && m2 >= 40 && m3 >= 40 && m4 >= 40 && m5 >= 40)
-                        ? "PASS" : "FAIL";
-                String grade;
-                if (result.equals("FAIL")) grade = "U";
-                else if (avg >= 90) grade = "O";
-                else if (avg >= 80) grade = "A+";
-                else if (avg >= 70) grade = "A";
-                else if (avg >= 60) grade = "B+";
-                else if (avg >= 50) grade = "B";
-                else grade = "C";
-                System.out.println("\n========== MARK LIST ==========");
-                System.out.println("Register No : " + regno);
-                System.out.println("Name : " + name);
-                System.out.println("Department : " + dept);
-                System.out.println("--------------------------------");
-                System.out.println("Subject 1 : " + m1);
-                System.out.println("Subject 2 : " + m2);
-                System.out.println("Subject 3 : " + m3);
-                System.out.println("Subject 4 : " + m4);
-                System.out.println("Subject 5 : " + m5);
-                System.out.println("--------------------------------");
-                System.out.println("Total : " + total);
-                System.out.printf("Average : %.2f%n", avg);
-                System.out.println("Result : " + result);
-                System.out.println("Grade : " + grade);
-                System.out.println("================================");
+int main() {
+    int arr[10], no, i, j, c, heap_root, temp;
+    printf("Input number of elements:");
+    scanf("%d", &no);
+    printf("\nInput array values one by one: ");
+    for(i = 0; i < no; i++)
+        scanf("%d", &arr[i]);
+    for(i = 1; i < no; i++) {
+        c = i;
+        do {
+            heap_root = (c - 1) / 2;
+            if(arr[heap_root] < arr[c]) {
+                temp = arr[heap_root];
+                arr[heap_root] = arr[c];
+                arr[c] = temp;
             }
-        } catch (SQLException e) {
-            System.out.println("DB Error: " + e.getMessage());
-        } finally {
-            sc.close();
-        }
+            c = heap_root;
+        } while(c != 0);
     }
+    printf("Heap array: ");
+    for(i = 0; i < no; i++)
+        printf("%d \t", arr[i]);
+    for(j = no - 1; j >= 0; j--) {
+        temp = arr[0];
+        arr[0] = arr[j];
+        arr[j] = temp;
+        heap_root = 0;
+        do {
+            c = 2 * heap_root + 1;
+            if((arr[c] < arr[c + 1]) && c < j - 1)
+                c++;
+            if(arr[heap_root] < arr[c] && c < j) {
+                temp = arr[heap_root];
+                arr[heap_root] = arr[c];
+                arr[c] = temp;
+            }
+            heap_root = c;
+        } while(c < j);
+    }
+    printf("\nSorted array:");
+    for(i = 0; i < no; i++)
+        printf("\t%d", arr[i]);
+    printf("\n");
 }
 
 
-EX-9
+Ex- 9
 
-package com.demo;
+#include<stdio.h>
+#include<ctype.h>
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+char stack[20];
+int top = -1;
 
-@WebServlet(name = "MyCookieServlet", urlPatterns = {"/makecookie"})
-public class MyCookieServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        Cookie c = new Cookie("user", "Student");
-        c.setMaxAge(300);
-        response.addCookie(c);
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head><title>Cookie Page</title></head>");
-            out.println("<body>");
-            out.println("<h1>Success!</h1>");
-            out.println("<p>A cookie named <b>'user'</b> has been created.</p>");
-            out.println("<p>It will expire in 5 minutes.</p>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+void push(char x) {
+    stack[++top] = x;
 }
 
+char pop() {
+    if(top == -1)
+        return -1;
+    else
+        return stack[top--];
+}
+
+int priority(char x) {
+    if(x == '(')
+        return 0;
+    if(x == '+' || x == '-')
+        return 1;
+    if(x == '*' || x == '/')
+        return 2;
+}
+
+int main() {
+    char exp[20];
+    char *e, x;
+    printf("Enter the expression:");
+    scanf("%s", exp);
+    e = exp;
+    while(*e != '\0') {
+        if(isalnum(*e))
+            printf("%c", *e);
+        else if(*e == '(')
+            push(*e);
+        else if(*e == ')') {
+            while((x = pop()) != '(')
+                printf("%c", x);
+        } else {
+            while(priority(stack[top]) >= priority(*e))
+                printf("%c", pop());
+            push(*e);
+        }
+        e++;
+    }
+    while(top != -1) {
+        printf("%c", pop());
+    }
+}
 
 Ex-10
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login Page</title>
-</head>
-<body>
-    <h2>Login to System</h2>
-    <form action="LoginServlet" method="POST">
-        Username: <input type="text" name="txtUser"><br><br>
-        Password: <input type="password" name="txtPass"><br><br>
-        <input type="submit" value="Login">
-    </form>
+#include <stdio.h>
 
-</body>
-</html>
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
 
-package com.auth;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-public class LoginServlet extends HttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        String user = request.getParameter("txtUser");
-        String pass = request.getParameter("txtPass");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<html><body>");
-            if ("admin".equals(user) && "12345".equals(pass)) {
-                out.println("<h1>Welcome, " + user + "!</h1>");
-                out.println("<p>Login Successful.</p>");
-            } else {
-                out.println("<h1 style='color:red;'>Login Failed!</h1>");
-                out.println("<p>Invalid username or password.</p>");
-                out.println("<a href='login.html'>Try Again</a>");
-            }
-            out.println("</body></html>");
+int knapSack(int W, int wt[], int val[], int n) {
+    int i, w;
+    int K[n + 1][W + 1];
+    for(i = 0; i <= n; i++) {
+        for(w = 0; w <= W; w++) {
+            if(i == 0 || w == 0)
+                K[i][w] = 0;
+            else if(wt[i - 1] <= w)
+                K[i][w] = max(val[i - 1] + K[i - 1][w - wt[i - 1]], K[i - 1][w]);
+            else
+                K[i][w] = K[i - 1][w];
         }
     }
+    return K[n][W];
 }
+
+int main() {
+    int i, n, val[20], wt[20], W;
+    printf("Enter number of items:");
+    scanf("%d", &n);
+    printf("Enter value and weight of items:\n");
+    for(i = 0; i < n; ++i) {
+        scanf("%d%d", &val[i], &wt[i]);
+    }
+    printf("Enter size of knapsack:");
+    scanf("%d", &W);
+    printf("%d", knapSack(W, wt, val, n));
+    return 0;
+}
+
 
 Ex-11
 
-public class TestEmployee {
-    public static void main(String[] args) {
-        EmployeeBean emp = new EmployeeBean();
-        emp.setName("Dr. Nithyanandh Selvam");
-        emp.setSalary(75000);
-        emp.setDesignation("Professor");
-        emp.setCompany("PSG College of Arts & Science");
-        System.out.println("Employee Details");
-        System.out.println("-------------------------");
-        System.out.println("Name: " + emp.getName());
-        System.out.println("Salary: " + emp.getSalary());
-        System.out.println("Designation: " + emp.getDesignation());
-        System.out.println("Company: " + emp.getCompany());
-    }
+
+#include <stdio.h>
+#include <limits.h>
+
+#define V 5
+
+int minKey(int key[], int mstSet[]) {
+    int min = INT_MAX, min_index;
+    int v;
+    for(v = 0; v < V; v++)
+        if(mstSet[v] == 0 && key[v] < min)
+            min = key[v], min_index = v;
+    return min_index;
 }
 
-public class EmployeeBean {
-    private String name;
-    private double salary;
-    private String designation;
-    private String company;
-    public EmployeeBean() {
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-    public void setCompany(String company) {
-        this.company = company;
-    }
-    public String getName() {
-        return name;
-    }
-    public double getSalary() {
-        return salary;
-    }
-    public String getDesignation() {
-        return designation;
-    }
-    public String getCompany() {
-        return company;
-    }
+int printMST(int parent[], int n, int graph[V][V]) {
+    int i;
+    printf("Edge   Weight\n");
+    for(i = 1; i < V; i++)
+        printf("%d - %d    %d\n", parent[i], i, graph[i][parent[i]]);
 }
+
+void primMST(int graph[V][V]) {
+    int parent[V];
+    int key[V], mstSet[V];
+    int i, v, count;
+    for(i = 0; i < V; i++)
+        key[i] = INT_MAX, mstSet[i] = 0;
+    key[0] = 0;
+    parent[0] = -1;
+    for(count = 0; count < V - 1; count++) {
+        int u = minKey(key, mstSet);
+        mstSet[u] = 1;
+        for(v = 0; v < V; v++)
+            if(graph[u][v] && mstSet[v] == 0 && graph[u][v] < key[v])
+                parent[v] = u, key[v] = graph[u][v];
+    }
+    printMST(parent, V, graph);
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 2, 0, 6, 0},
+        {2, 0, 3, 8, 5},
+        {0, 3, 0, 0, 7},
+        {6, 8, 0, 0, 9},
+        {0, 5, 7, 9, 0}
+    };
+    primMST(graph);
+    return 0;
+}
+
 
 
 Ex-12
 
-package com.demo;
+#include <stdio.h>
+#include <math.h>
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+int board[20], count;
 
-@WebServlet(name = "CounterServlet", urlPatterns = {"/CounterServlet"})
-public class CounterServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        Cookie[] cookies = request.getCookies();
-        int count = 0;
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if (c.getName().equals("visit_count")) {
-                    count = Integer.parseInt(c.getValue());
-                    break;
-                }
-            }
+void queen(int row, int n);
+void print(int n);
+int place(int row, int column);
+
+int main() {
+    int n;
+    printf("- N Queens Problem Using Backtracking -");
+    printf("\n\nEnter number of Queens:");
+    scanf("%d", &n);
+    queen(1, n);
+    return 0;
+}
+
+void print(int n) {
+    int i, j;
+    printf("\n\nSolution %d:\n\n", ++count);
+    for(i = 1; i <= n; ++i)
+        printf(" %d", i);
+    for(i = 1; i <= n; ++i) {
+        printf("\n\n%d", i);
+        for(j = 1; j <= n; ++j) {
+            if(board[i] == j)
+                printf("\tQ");
+            else
+                printf("\t-");
         }
-        count++;
-        Cookie counterCookie = new Cookie("visit_count", String.valueOf(count));
-        counterCookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(counterCookie);
-        out.println("<html><head><title>Visit Counter</title></head><body>");
-        if (count == 1) {
-            out.println("<h2>Welcome! This is your first visit.</h2>");
-        } else {
-            out.println("<h2>Welcome back!</h2>");
-            out.println("<h3>You have visited this page " + count + " times.</h3>");
-        }
-        out.println("<p>Refresh the page to see the counter increase.</p>");
-        out.println("</body></html>");
     }
 }
+
+int place(int row, int column) {
+    int i;
+    for(i = 1; i <= row - 1; ++i) {
+        if(board[i] == column)
+            return 0;
+        else if(abs(board[i] - column) == abs(i - row))
+            return 0;
+    }
+    return 1;
+}
+
+void queen(int row, int n) {
+    int column;
+    for(column = 1; column <= n; ++column) {
+        if(place(row, column)) {
+            board[row] = column;
+            if(row == n)
+                print(n);
+            else
+                queen(row + 1, n);
+        }
+    }
+}
+
+
+Ex-14
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node* left;
+    struct node* right;
+};
+
+void inorder(struct node* root) {
+    if(root == NULL)
+        return;
+    inorder(root->left);
+    printf("%d->", root->data);
+    inorder(root->right);
+}
+
+void preorder(struct node* root) {
+    if(root == NULL)
+        return;
+    printf("%d->", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+
+void postorder(struct node* root) {
+    if(root == NULL)
+        return;
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d->", root->data);
+}
+
+struct node* createNode(int value) {
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct node* insertleft(struct node* root, int value) {
+    root->left = createNode(value);
+    return root->left;
+}
+
+struct node* insertright(struct node* root, int value) {
+    root->right = createNode(value);
+    return root->right;
+}
+
+int main() {
+    struct node* root = createNode(1);
+    insertleft(root, 12);
+    insertright(root, 9);
+    insertleft(root->left, 5);
+    insertright(root->left, 6);
+    printf("inorder traversal\n");
+    inorder(root);
+    printf("\n preorder traversal\n");
+    preorder(root);
+    printf("\n postorder traversal\n");
+    postorder(root);
+    return 0;
+}
+
 
