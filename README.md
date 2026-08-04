@@ -22,7 +22,6 @@ def bfs(graph, start):
                 queue.append(neighbor) 
  
 bfs(graph, 'A')
-<img width="468" height="548" alt="image" src="https://github.com/user-attachments/assets/54a048ea-d30a-42ba-aca3-542295b4a1ad" />
 
 
 Ex-2
@@ -43,7 +42,6 @@ def dfs(node):
         for neighbor in graph[node]: 
             dfs(neighbor) 
 dfs('A') 
-<img width="468" height="404" alt="image" src="https://github.com/user-attachments/assets/1ba2de58-6f76-4c78-8c82-1ff1a79a3896" />
 
 
 Ex-3
@@ -79,7 +77,7 @@ for turn in range(9):
         print("Position already filled") 
 else: 
     print("Game Draw") 
-<img width="468" height="644" alt="image" src="https://github.com/user-attachments/assets/c5f78544-b426-4072-9e97-1876f6f0e21b" />
+
 
 
 Ex-4
@@ -115,7 +113,7 @@ def solve(b):
     return -1
 moves = solve([[3,1,2],[4,7,5],[6,8,0]])
 print("Minimum moves:",moves)
-<img width="468" height="644" alt="image" src="https://github.com/user-attachments/assets/759e1c89-8fa0-41a0-9f4d-c9d7e4fa2e96" />
+
 
 
 Ex-5
@@ -135,7 +133,8 @@ print("Fill Jug2 again:", x, y)
 y = y - (jug1 - x) 
 x = jug1 
 print("Final State:", x, y) 
-<img width="468" height="381" alt="image" src="https://github.com/user-attachments/assets/f50d6932-e8be-448b-9db8-a3d3a33a4bcf" />
+
+
 
 Ex-6
 
@@ -159,7 +158,7 @@ for path in permutations(cities):
         min_path = path 
 print("Minimum Path:", min_path) 
 print("Minimum Cost:", min_cost) 
-<img width="468" height="500" alt="image" src="https://github.com/user-attachments/assets/b4a6cf91-a3f7-4c16-8d93-2cb2749bf4df" />
+
 
 Ex-7
 
@@ -171,7 +170,7 @@ def tower(n, source, auxiliary, destination):
     print("Move disk", n, "from", source, "to", destination) 
     tower(n-1, auxiliary, source, destination) 
 tower(3, 'A', 'B', 'C')
-<img width="468" height="213" alt="image" src="https://github.com/user-attachments/assets/cfa27414-6ed0-47ce-895b-6710e9a1cce6" />
+
 
 
 
